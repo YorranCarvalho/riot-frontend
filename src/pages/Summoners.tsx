@@ -8,10 +8,17 @@ import OverviewBanner from "../components/summoners/OverviewBanner";
 import ScoutTraits from "../components/summoners/ScoutTraits";
 import RankedHistoryCards from "../components/summoners/StatsCards";
 import SummonerRightPanel from "../components/Tabs/SummonerRightPanel";
+import { useMemo, useState } from "react";
+import type { ScoutTrait } from "../types/summoner";
 
 export default function Summoner() {
   const { name, tag } = useParams<{ name: string; tag: string }>();
   const { data, loading, error } = useSummoner(name, tag);
+  const [derivedTraits, setDerivedTraits] = useState<ScoutTrait[]>([]);
+
+  const displayedTraits = useMemo(() => {
+    return derivedTraits.length ? derivedTraits : data?.traits ?? [];
+  }, [derivedTraits, data?.traits]);
 
   return (
     <div className="min-h-screen bg-primary-darkblue text-secondary-text">
@@ -34,7 +41,7 @@ export default function Summoner() {
           <div className="grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-6">
             <aside className="space-y-6">
               <ProfileHeader info={data.basic} />
-              <ScoutTraits traits={data.traits} />
+              <ScoutTraits traits={displayedTraits} />
               <RankedHistoryCards ranked={data.ranked} />
             </aside>
 
@@ -44,6 +51,7 @@ export default function Summoner() {
               <SummonerRightPanel
                 matches={data.recentMatches}
                 championPool={data.championPool}
+                onDerivedTraitsChange={setDerivedTraits}
               />
             </main>
           </div>

@@ -1,21 +1,5 @@
 import { getChampionIconUrl, getItemIconUrl } from "../../constants/game";
-
-type Match = {
-  matchId: string;
-  gameCreation: number;
-  gameDuration: number;
-  championName: string;
-  kills: number;
-  deaths: number;
-  assists: number;
-  kda: number;
-  win: boolean;
-  role: string;
-  farm: number;
-  goldEarned: number;
-  damage: number;
-  items: number[];
-};
+import type { Match } from "../../types/summoner";
 
 interface Props {
   matches: Match[];

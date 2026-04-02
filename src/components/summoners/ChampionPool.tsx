@@ -1,20 +1,19 @@
-export type ChampionPoolRow = {
-  championName: string;
-  games: number;
-  wins: number;
-  losses: number;
-  winRate: number;
-  avgKills: number;
-  avgDeaths: number;
-  avgAssists: number;
-  kda: number;
-  avgCs: number;
-  avgGold: number;
-};
+import { useMemo, useState } from "react";
+import type { ChampionPoolRow } from "../../types/summoner";
 
 interface ChampionPoolProps {
   champions: ChampionPoolRow[];
 }
+
+type SortKey =
+  | "championName"
+  | "games"
+  | "winRate"
+  | "kda"
+  | "avgCs"
+  | "avgGold";
+
+type SortDirection = "asc" | "desc";
 
 function getChampionIcon(championName: string) {
   return `https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/${championName}.png`;
@@ -31,7 +30,68 @@ function getWinRateClass(winRate: number) {
   return "bg-rose-500/15 text-rose-300 border-rose-500/20";
 }
 
+function SortArrow({
+  active,
+  direction,
+}: {
+  active: boolean;
+  direction: SortDirection;
+}) {
+  return (
+    <span className={`ml-1 inline-block text-[10px] ${active ? "text-fuchsia-300" : "text-white/25"}`}>
+      {direction === "asc" ? "▲" : "▼"}
+    </span>
+  );
+}
+
 export default function ChampionPool({ champions }: ChampionPoolProps) {
+  const [sortKey, setSortKey] = useState<SortKey>("games");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const sortedChampions = useMemo(() => {
+    const items = [...champions];
+
+    items.sort((a, b) => {
+      const aValue = a[sortKey];
+      const bValue = b[sortKey];
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        const result = aValue.localeCompare(bValue);
+        return sortDirection === "asc" ? result : -result;
+      }
+
+      const result = Number(aValue) - Number(bValue);
+      return sortDirection === "asc" ? result : -result;
+    });
+
+    return items;
+  }, [champions, sortKey, sortDirection]);
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      return;
+    }
+
+    setSortKey(key);
+    setSortDirection(key === "championName" ? "asc" : "desc");
+  }
+
+  function renderHeader(label: string, key: SortKey) {
+    const active = sortKey === key;
+
+    return (
+      <button
+        type="button"
+        onClick={() => handleSort(key)}
+        className="inline-flex items-center font-medium transition hover:text-white"
+      >
+        {label}
+        <SortArrow active={active} direction={active ? sortDirection : "desc"} />
+      </button>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-white/10 bg-primary-blue p-5 shadow-xl">
       <div className="mb-5 flex items-center justify-between gap-4">
@@ -48,20 +108,21 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[860px] border-separate border-spacing-y-2">
+        <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
           <thead>
             <tr className="text-left text-xs uppercase tracking-[0.12em] text-white/45">
-              <th className="px-4 py-3">Champion</th>
-              <th className="px-4 py-3">Partidas</th>
-              <th className="px-4 py-3">Win Rate</th>
-              <th className="px-4 py-3">KDA</th>
-              <th className="px-4 py-3">CS Médio</th>
-              <th className="px-4 py-3">Gold Médio</th>
+              <th className="px-4 py-3">{renderHeader("Champion", "championName")}</th>
+              <th className="px-4 py-3">{renderHeader("Partidas", "games")}</th>
+              <th className="px-4 py-3">{renderHeader("Win Rate", "winRate")}</th>
+              <th className="px-4 py-3">{renderHeader("KDA", "kda")}</th>
+              <th className="px-4 py-3">{renderHeader("CS Médio", "avgCs")}</th>
+              <th className="px-4 py-3">{renderHeader("Gold Médio", "avgGold")}</th>
+              <th className="px-4 py-3">Trend</th>
             </tr>
           </thead>
 
           <tbody>
-            {champions.map((champion) => (
+            {sortedChampions.map((champion) => (
               <tr
                 key={champion.championName}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] transition hover:bg-white/[0.05]"
@@ -112,15 +173,29 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
                   {champion.avgCs.toFixed(1)}
                 </td>
 
-                <td className="rounded-r-2xl px-4 py-4 text-white">
+                <td className="px-4 py-4 text-white">
                   {formatGold(champion.avgGold)}
+                </td>
+
+                <td className="rounded-r-2xl px-4 py-4">
+                  <div className="flex gap-1">
+                    {(champion.recentTrend ?? []).map((result, index) => (
+                      <span
+                        key={`${champion.championName}-${index}-${result}`}
+                        title={result === "W" ? "Vitória" : "Derrota"}
+                        className={`h-3 w-3 rounded-full ${
+                          result === "W" ? "bg-emerald-400" : "bg-rose-400"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {champions.length === 0 && (
+        {sortedChampions.length === 0 && (
           <div className="py-10 text-center text-white/50">
             Nenhum campeão encontrado.
           </div>
