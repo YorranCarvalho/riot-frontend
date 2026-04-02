@@ -1,12 +1,23 @@
-import type { ScoutScore } from "../../utils/scoutAnalysis";
-
 interface Props {
-  score: ScoutScore;
+  overview?: {
+    scoutScore: number;
+    scoutTier: "Elite" | "Strong" | "Good" | "Average" | "Risky";
+    verdict: string;
+    tags: string[];
+  };
+  scores?: {
+    mechanics?: number;
+    consistency?: number;
+    championPool?: number;
+    roleConfidence?: number;
+    riskControl?: number;
+  };
 }
 
 function getScoreColor(score: number) {
-  if (score >= 80) return "text-emerald-300";
-  if (score >= 65) return "text-sky-300";
+  if (score >= 85) return "text-emerald-300";
+  if (score >= 75) return "text-sky-300";
+  if (score >= 65) return "text-indigo-300";
   if (score >= 50) return "text-amber-300";
   return "text-rose-300";
 }
@@ -22,38 +33,56 @@ function ScoreBar({ value }: { value: number }) {
   );
 }
 
-export default function ScoutScoreCard({ score }: Props) {
+function ScoreItem({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-white/75">{label}</span>
+        <span className="font-semibold text-white">{value}</span>
+      </div>
+      <ScoreBar value={value} />
+    </div>
+  );
+}
+
+export default function ScoutScoreCard({ overview, scores }: Props) {
+  if (!overview) return null;
+
   return (
     <div className="rounded-2xl border border-white/10 bg-primary-blue p-5 shadow-xl">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-white">Scout Score</h3>
-          <p className="text-sm text-secondary-text/60">
-            Nota geral estimada com base nas partidas filtradas
-          </p>
-        </div>
+          <p className="text-sm text-secondary-text/60">Scout Score</p>
 
-        <div className={`text-4xl font-black ${getScoreColor(score.overall)}`}>
-          {score.overall}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {[
-          { label: "Laning", value: score.laning },
-          { label: "Fighting", value: score.fighting },
-          { label: "Consistency", value: score.consistency },
-          { label: "Versatility", value: score.versatility },
-          { label: "Farming", value: score.farming },
-        ].map((item) => (
-          <div key={item.label} className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-white/75">{item.label}</span>
-              <span className="font-semibold text-white">{item.value}</span>
+          <div className="mt-2 flex items-end gap-3">
+            <div className={`text-5xl font-black ${getScoreColor(overview.scoutScore)}`}>
+              {overview.scoutScore}
             </div>
-            <ScoreBar value={item.value} />
+            <div className="rounded-xl bg-white/10 px-3 py-1 text-sm font-semibold text-white">
+              {overview.scoutTier}
+            </div>
           </div>
-        ))}
+
+          <p className="mt-2 text-sm text-secondary-text/70">{overview.verdict}</p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {overview.tags?.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-fuchsia-500/15 px-3 py-1 text-xs font-medium text-fuchsia-200"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid w-full max-w-[420px] grid-cols-1 gap-4 md:grid-cols-2">
+          <ScoreItem label="Mechanics" value={scores?.mechanics ?? 0} />
+          <ScoreItem label="Consistency" value={scores?.consistency ?? 0} />
+          <ScoreItem label="Champion Pool" value={scores?.championPool ?? 0} />
+          <ScoreItem label="Role Confidence" value={scores?.roleConfidence ?? 0} />
+        </div>
       </div>
     </div>
   );

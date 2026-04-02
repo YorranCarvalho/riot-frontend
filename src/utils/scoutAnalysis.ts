@@ -87,19 +87,32 @@ export function buildChampionPoolFromMatches(matches: Match[]): ChampionPoolRow[
 
       const totalKills = games.reduce((acc, game) => acc + game.kills, 0);
       const totalDeaths = games.reduce((acc, game) => acc + game.deaths, 0);
-      const totalAssists = games.reduce((acc, game) => acc + game.assists, 0);
-      const totalCs = games.reduce((acc, game) => acc + game.farm, 0);
-      const totalGold = games.reduce((acc, game) => acc + game.goldEarned, 0);
 
-      const avgKills = totalKills / totalGames;
-      const avgDeaths = totalDeaths / totalGames;
-      const avgAssists = totalAssists / totalGames;
-      const avgCs = totalCs / totalGames;
-      const avgGold = totalGold / totalGames;
-      const kda = (totalKills + totalAssists) / Math.max(1, totalDeaths);
+      const averageKda = (totalKills + games.reduce((acc, game) => acc + game.assists, 0)) /
+        Math.max(1, totalDeaths);
+
+      const avgCsPerMin =
+        games.reduce((acc, game) => acc + game.csPerMin, 0) / totalGames;
+
+      const avgDamagePerMin =
+        games.reduce((acc, game) => acc + game.damagePerMin, 0) / totalGames;
+
       const winRate = (wins / totalGames) * 100;
 
-      const recentTrend = games.slice(0, 5).map((game) => (game.win ? "W" : "L"));
+      let trend: "up" | "stable" | "down" = "stable";
+      const recentGames = games.slice(0, Math.ceil(totalGames / 2));
+      const olderGames = games.slice(Math.ceil(totalGames / 2));
+
+      const recentWr = recentGames.length
+        ? (recentGames.filter((game) => game.win).length / recentGames.length) * 100
+        : 0;
+
+      const olderWr = olderGames.length
+        ? (olderGames.filter((game) => game.win).length / olderGames.length) * 100
+        : 0;
+
+      if (recentWr - olderWr >= 10) trend = "up";
+      if (olderWr - recentWr >= 10) trend = "down";
 
       return {
         championName,
@@ -107,13 +120,10 @@ export function buildChampionPoolFromMatches(matches: Match[]): ChampionPoolRow[
         wins,
         losses,
         winRate,
-        avgKills,
-        avgDeaths,
-        avgAssists,
-        kda,
-        avgCs,
-        avgGold,
-        recentTrend,
+        averageKda,
+        avgCsPerMin,
+        avgDamagePerMin,
+        trend,
       };
     })
     .sort((a, b) => b.games - a.games);

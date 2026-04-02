@@ -10,6 +10,10 @@ import RankedHistoryCards from "../components/summoners/StatsCards";
 import SummonerRightPanel from "../components/Tabs/SummonerRightPanel";
 import { useMemo, useState } from "react";
 import type { ScoutTrait } from "../types/summoner";
+import ScoutScoreCard from "../components/summoners/ScoutScoreCard";
+import TrendsCard from "../components/summoners/TrendsCard";
+import WarningsCard from "../components/summoners/WarningsCard";
+import OverviewCard from "../components/summoners/OverviewCard";
 
 export default function Summoner() {
   const { name, tag } = useParams<{ name: string; tag: string }>();
@@ -46,7 +50,26 @@ export default function Summoner() {
             </aside>
 
             <main className="space-y-6 min-w-0">
-              <OverviewBanner info={data.basic} stats={data.stats} scores={data.scores}/>
+              {data.overview && (
+                <ScoutScoreCard overview={data.overview} scores={data.scores} />
+              )}
+
+              <OverviewBanner
+                info={data.basic}
+                stats={data.stats}
+                scores={data.scores}
+              />
+
+              {(data.overview || data.trends) && (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  {data.overview && <OverviewCard overview={data.overview} />}
+                  {data.trends && <TrendsCard trends={data.trends} />}
+                </div>
+              )}
+
+              {!!data.warnings?.length && (
+                <WarningsCard warnings={data.warnings} />
+              )}
 
               <SummonerRightPanel
                 matches={data.recentMatches}

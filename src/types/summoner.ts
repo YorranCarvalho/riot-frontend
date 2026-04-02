@@ -11,10 +11,15 @@ export type Match = {
   win: boolean;
   role: string;
   farm: number;
+  csPerMin: number;
   goldEarned: number;
+  goldPerMin: number;
   damage: number;
+  damagePerMin: number;
   items: number[];
   summonerSpells: number[];
+  performanceScore?: number;
+  performanceLabel?: "Great" | "Good" | "Average" | "Poor";
 };
 
 export type ScoutTrait = {
@@ -42,13 +47,10 @@ export type ChampionPoolRow = {
   wins: number;
   losses: number;
   winRate: number;
-  kda: number;
-  avgKills: number;
-  avgDeaths: number;
-  avgAssists: number;
-  avgCs: number;
-  avgGold: number;
-  recentTrend: ("W" | "L")[];
+  averageKda: number;
+  avgCsPerMin?: number;
+  avgDamagePerMin?: number;
+  trend?: "up" | "stable" | "down";
 };
 
 export type ChampionPoolRaw = {
@@ -57,18 +59,10 @@ export type ChampionPoolRaw = {
   wins?: number;
   losses?: number;
   winRate?: number;
-
-  kda?: number;
   averageKda?: number;
-
-  avgCs?: number;
-  avgGold?: number;
-
-  avgKills?: number;
-  avgDeaths?: number;
-  avgAssists?: number;
-
-  recentTrend?: ("W" | "L")[];
+  avgCsPerMin?: number;
+  avgDamagePerMin?: number;
+  trend?: "up" | "stable" | "down";
 };
 
 export type SummonerProfile = {
@@ -79,23 +73,83 @@ export type SummonerProfile = {
     profileIconId: number;
     level: number;
   };
-  mastery: unknown[];
+
+  mastery: Array<{
+    championId: number;
+    championLevel: number;
+    championPoints: number;
+  }>;
+
   stats: {
     wins: number;
     losses: number;
     averageKda: number;
+    averageCsPerMin?: number;
+    averageDamagePerMin?: number;
+    averageGoldPerMin?: number;
     mostPlayedRole: string;
   };
-  
-  scores: PlayerScores;
+
+  scores: PlayerScores & {
+    scoutScore?: number;
+    recentForm?: number;
+    mechanics?: number;
+    championPool?: number;
+    roleConfidence?: number;
+    riskControl?: number;
+    advancedConsistencyScore?: number;
+  };
 
   recentMatches: Match[];
+
   traits: ScoutTrait[];
+
   ranked: {
     soloDuo: RankedQueue;
     flex: RankedQueue;
   };
+
   championPool?: ChampionPoolRow[];
+
+  overview?: {
+    scoutScore: number;
+    scoutTier: "Elite" | "Strong" | "Good" | "Average" | "Risky";
+    verdict: string;
+    primaryRole: string;
+    sampleSize: number;
+    tags: string[];
+    strengths: string[];
+    weaknesses: string[];
+  };
+
+  trends?: {
+    last10WinRate: number;
+    last20WinRate: number;
+    recentTrend: "up" | "stable" | "down";
+    streak: {
+      type: "win" | "loss" | "none";
+      count: number;
+    };
+  };
+
+  averages?: {
+    games: number;
+    wins: number;
+    losses: number;
+    winRate: number;
+    kills: number;
+    deaths: number;
+    assists: number;
+    kda: number;
+    csPerMin: number;
+    damagePerMin: number;
+    goldPerMin: number;
+    visionPerMin: number;
+    killParticipation: number;
+    gameDurationAvg: number;
+  };
+
+  warnings?: string[];
 };
 
 export type ScoutScore = {

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import ChampionPool from "../summoners/ChampionPool";
 import MatchHistory from "../summoners/MatchHistory";
 import ScoutIntelligence from "../summoners/ScoutIntelligence";
-import ScoutScoreCard from "../summoners/ScoutScoreCard";
 import {
   buildScoutAnalysis,
   filterMatches,
@@ -45,7 +44,6 @@ export default function SummonerRightPanel({
 
   return (
     <div className="space-y-6">
-      <ScoutScoreCard score={analysis.scoutScore} />
       <ScoutIntelligence insights={analysis.intelligence} />
       <RoleAnalysisCard matches={filteredMatches} />
 
