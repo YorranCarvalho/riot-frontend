@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-type Match = {
+export type Match = {
   matchId: string;
   gameCreation: number;
   gameDuration: number;
@@ -39,6 +39,20 @@ type RankedQueue = {
   seasons: RankedSeason[];
 };
 
+export type ChampionPoolRow = {
+  championName: string;
+  games: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  avgKills: number;
+  avgDeaths: number;
+  avgAssists: number;
+  kda: number;
+  avgCs: number;
+  avgGold: number;
+};
+
 type SummonerProfile = {
   basic: {
     puuid: string;
@@ -60,6 +74,7 @@ type SummonerProfile = {
     soloDuo: RankedQueue;
     flex: RankedQueue;
   };
+  championPool?: ChampionPoolRow[];
 };
 
 export function useSummoner(name?: string, tag?: string) {
