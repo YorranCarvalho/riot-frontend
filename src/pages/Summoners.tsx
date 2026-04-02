@@ -50,6 +50,7 @@ export default function Summoner() {
 
               <SummonerRightPanel
                 matches={data.recentMatches}
+                puuid={data.basic.puuid}
                 championPool={data.championPool}
                 onDerivedTraitsChange={setDerivedTraits}
               />

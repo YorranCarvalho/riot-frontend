@@ -98,3 +98,40 @@ export type PlayerAnalysis = {
   intelligence: ScoutInsight[];
   derivedTraits: ScoutTrait[];
 };
+
+export type MatchDetailParticipant = {
+  puuid: string;
+  summonerName: string;
+  riotIdGameName?: string;
+  riotIdTagline?: string;
+  championName: string;
+  teamId: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  kda: number;
+  win: boolean;
+  role: string;
+  farm: number;
+  goldEarned: number;
+  damage: number;
+  items: number[];
+  summonerSpells: number[];
+  champLevel: number;
+};
+
+export type MatchDetailTeam = {
+  teamId: number;
+  win: boolean;
+  participants: MatchDetailParticipant[];
+};
+
+export type MatchDetailsResponse = {
+  matchId: string;
+  queueId: number;
+  gameCreation: number;
+  gameDuration: number;
+  player: MatchDetailParticipant;
+  blueTeam: MatchDetailTeam;
+  redTeam: MatchDetailTeam;
+};

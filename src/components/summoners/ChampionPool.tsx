@@ -107,17 +107,27 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
         </span>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
+      <div className="w-full overflow-hidden">
+        <table className="w-full table-fixed border-separate border-spacing-y-2">
+          <colgroup>
+            <col className="w-[23%]" />
+            <col className="w-[12%]" />
+            <col className="w-[13%]" />
+            <col className="w-[17%]" />
+            <col className="w-[10%]" />
+            <col className="w-[12%]" />
+            <col className="w-[13%]" />
+          </colgroup>
+
           <thead>
-            <tr className="text-left text-xs uppercase tracking-[0.12em] text-white/45">
-              <th className="px-4 py-3">{renderHeader("Champion", "championName")}</th>
-              <th className="px-4 py-3">{renderHeader("Partidas", "games")}</th>
-              <th className="px-4 py-3">{renderHeader("Win Rate", "winRate")}</th>
-              <th className="px-4 py-3">{renderHeader("KDA", "kda")}</th>
-              <th className="px-4 py-3">{renderHeader("CS Médio", "avgCs")}</th>
-              <th className="px-4 py-3">{renderHeader("Gold Médio", "avgGold")}</th>
-              <th className="px-4 py-3">Trend</th>
+            <tr className="text-left text-[11px] uppercase tracking-[0.12em] text-white/45">
+              <th className="px-2 py-3">{renderHeader("Champion", "championName")}</th>
+              <th className="px-2 py-3 text-center">{renderHeader("Partidas", "games")}</th>
+              <th className="px-2 py-3 text-center">{renderHeader("Win Rate", "winRate")}</th>
+              <th className="px-2 py-3 text-center">{renderHeader("KDA", "kda")}</th>
+              <th className="px-2 py-3 text-center">{renderHeader("CS", "avgCs")}</th>
+              <th className="px-2 py-3 text-center">{renderHeader("Gold", "avgGold")}</th>
+              <th className="px-2 py-3 text-center">Trend</th>
             </tr>
           </thead>
 
@@ -127,21 +137,26 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
                 key={champion.championName}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] transition hover:bg-white/[0.05]"
               >
-                <td className="rounded-l-2xl px-4 py-4">
-                  <div className="flex items-center gap-3">
+                <td className="rounded-l-2xl px-2 py-4">
+                  <div className="flex min-w-0 items-center gap-3">
                     <img
                       src={getChampionIcon(champion.championName)}
                       alt={champion.championName}
-                      className="h-12 w-12 rounded-xl border border-white/10"
+                      className="h-11 w-11 shrink-0 rounded-xl border border-white/10"
                     />
-                    <div>
-                      <p className="font-semibold text-white">{champion.championName}</p>
-                      <p className="text-xs text-white/45">Season performance</p>
+
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-white">
+                        {champion.championName}
+                      </p>
+                      <p className="truncate text-xs text-white/45">
+                        Season performance
+                      </p>
                     </div>
                   </div>
                 </td>
 
-                <td className="px-4 py-4">
+                <td className="px-2 py-4 align-middle text-center">
                   <div className="flex flex-col">
                     <span className="font-semibold text-white">{champion.games}</span>
                     <span className="text-xs text-white/45">
@@ -150,9 +165,9 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
                   </div>
                 </td>
 
-                <td className="px-4 py-4">
+                <td className="px-2 py-4 align-middle text-center">
                   <span
-                    className={`inline-flex rounded-full border px-3 py-1 text-sm font-semibold ${getWinRateClass(
+                    className={`inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold ${getWinRateClass(
                       champion.winRate
                     )}`}
                   >
@@ -160,30 +175,32 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
                   </span>
                 </td>
 
-                <td className="px-4 py-4">
+                <td className="px-2 py-4 align-middle text-center">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-white">{champion.kda.toFixed(2)}:1</span>
-                    <span className="text-xs text-white/45">
+                    <span className="font-semibold text-white">
+                      {champion.kda.toFixed(2)}:1
+                    </span>
+                    <span className="truncate text-xs text-white/45">
                       {champion.avgKills.toFixed(1)} / {champion.avgDeaths.toFixed(1)} / {champion.avgAssists.toFixed(1)}
                     </span>
                   </div>
                 </td>
 
-                <td className="px-4 py-4 text-white">
+                <td className="px-2 py-4 align-middle text-center text-white">
                   {champion.avgCs.toFixed(1)}
                 </td>
 
-                <td className="px-4 py-4 text-white">
+                <td className="px-2 py-4 align-middle text-center text-white">
                   {formatGold(champion.avgGold)}
                 </td>
 
-                <td className="rounded-r-2xl px-4 py-4">
-                  <div className="flex gap-1">
-                    {(champion.recentTrend ?? []).map((result, index) => (
+                <td className="rounded-r-2xl px-2 py-4 align-middle">
+                  <div className="flex justify-center gap-1.5">
+                    {(champion.recentTrend ?? []).slice(0, 5).map((result, index) => (
                       <span
                         key={`${champion.championName}-${index}-${result}`}
                         title={result === "W" ? "Vitória" : "Derrota"}
-                        className={`h-3 w-3 rounded-full ${
+                        className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                           result === "W" ? "bg-emerald-400" : "bg-rose-400"
                         }`}
                       />

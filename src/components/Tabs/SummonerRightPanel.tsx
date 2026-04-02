@@ -15,12 +15,14 @@ import RoleAnalysisCard from "../summoners/RoleAnalysisCard";
 
 interface SummonerRightPanelProps {
   matches: Match[];
+  puuid: string;
   championPool?: ChampionPoolRow[];
   onDerivedTraitsChange?: (traits: ScoutTrait[]) => void;
 }
 
 export default function SummonerRightPanel({
   matches,
+  puuid,
   championPool,
   onDerivedTraitsChange,
 }: SummonerRightPanelProps) {
@@ -117,7 +119,7 @@ export default function SummonerRightPanel({
         </div>
 
         {selectedTab === "match-history" ? (
-          <MatchHistory matches={filteredMatches} />
+          <MatchHistory matches={filteredMatches} puuid={puuid} />
         ) : (
           <ChampionPool champions={analysis.championPool} />
         )}
