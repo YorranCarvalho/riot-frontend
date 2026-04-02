@@ -12,8 +12,8 @@ export default function SummonerNotFound({
   const navigate = useNavigate();
 
   return (
-    <div className="rounded-2xl border border-secondary-peach/20 bg-primary-wine p-8 text-center shadow-lg">
-      <div className="mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-[#1b1b2f] text-6xl shadow-inner">
+    <div className="bg-primary-blue text-secondary-text p-8 rounded-2xl border border-primary-wine/30 text-center shadow-lg">
+      <div className="mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-primary-blue text-6xl shadow-inner">
         <img
           src="/images/poro-not-found.png"
           alt="Poro"
@@ -39,7 +39,7 @@ export default function SummonerNotFound({
       </p>
 
       <div className="mt-8 flex justify-center">
-        <div className="rounded-2xl bg-[#1b1b2f] px-6 py-5 border border-white/10 max-w-md">
+        <div className="bg-primary-blue px-6 py-5 border border-primary-wine/20 rounded-2xl max-w-md">
           <p className="text-xl">૮ ˶ᵔ ᵕ ᵔ˶ ა</p>
           <p className="mt-2 text-sm text-white/70">
             “Tente conferir maiúsculas, acentos, espaços e principalmente a tag.”

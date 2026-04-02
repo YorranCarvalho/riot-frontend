@@ -20,6 +20,13 @@ type Match = {
   summonerSpells: number[];
 };
 
+type ScoutTrait = {
+  key: string;
+  label: string;
+  color: "red" | "green" | "yellow" | "blue" | "purple" | "pink";
+  description: string;
+};
+
 type SummonerProfile = {
   basic: {
     puuid: string;
@@ -36,6 +43,7 @@ type SummonerProfile = {
     mostPlayedRole: string;
   };
   recentMatches: Match[];
+  traits: ScoutTrait[];
 };
 
 export function useSummoner(name?: string, tag?: string) {

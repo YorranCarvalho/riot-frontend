@@ -5,13 +5,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          darkred: "#3D0209",
+          darkblue: "#0B1C2C",
+          blue: "#13293D",
           wine: "#531928",
           blood: "#96071E",
         },
         secondary: {
-          softpink: "#FEA6AC",
-          peach: "#F1D6C0",
+          text: "#E6EDF3",
+          muted: "#94A3B8",
         },
       },
       fontFamily: {

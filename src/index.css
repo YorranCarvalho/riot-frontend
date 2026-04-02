@@ -9,5 +9,5 @@
 }
 
 body {
-  @apply bg-primary-darkred text-secondary-peach font-inter;
+  @apply bg-primary-darkblue text-secondary-text font-inter;
 }

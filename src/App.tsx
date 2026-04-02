@@ -5,7 +5,7 @@ import Summoner from "./pages/Summoners";
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-secondary-dark text-secondary-light font-inter">
+      <div className="min-h-screen bg-primary-darkblue text-secondary-text font-inter">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/summoner/:name/:tag" element={<Summoner />} />

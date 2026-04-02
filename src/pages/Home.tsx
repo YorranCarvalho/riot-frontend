@@ -25,7 +25,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-primary-darkred text-secondary-peach">
+    <main className="min-h-screen bg-primary-darkblue text-secondary-text">
       <div className="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-12">
         <div className="grid w-full items-center gap-12 lg:grid-cols-2">
           <section className="space-y-6">
@@ -68,7 +68,7 @@ export default function Home() {
           <section className="flex justify-center lg:justify-end">
             <form
               onSubmit={handleSubmit}
-              className="w-full max-w-md rounded-2xl border border-secondary-peach/15 bg-primary-wine/80 p-6 shadow-2xl backdrop-blur-sm"
+              className="w-full max-w-md rounded-2xl border border-primary-wine/20 bg-primary-blue p-6 shadow-2xl backdrop-blur-sm"
             >
               <div className="mb-6">
                 <h2 className="text-2xl font-bold">Search Summoner</h2>
@@ -91,7 +91,7 @@ export default function Home() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Nome"
                     autoComplete="off"
-                    className="w-full rounded-xl border border-secondary-peach/15 bg-primary-darkred px-4 py-3 outline-none transition focus:border-primary-blood focus:ring-2 focus:ring-primary-blood/20"
+                    className="w-full rounded-xl border border-primary-wine/20 bg-primary-darkblue px-4 py-3 text-secondary-text placeholder:text-secondary-muted outline-none transition focus:border-primary-blood focus:ring-2 focus:ring-primary-blood/20"
                   />
                 </div>
 
@@ -106,9 +106,9 @@ export default function Home() {
                     id="summoner-tag"
                     value={tag}
                     onChange={(e) => setTag(e.target.value)}
-                    placeholder="#"
+                    placeholder="Tag"
                     autoComplete="off"
-                    className="w-full rounded-xl border border-secondary-peach/15 bg-primary-darkred px-4 py-3 uppercase outline-none transition focus:border-primary-blood focus:ring-2 focus:ring-primary-blood/20"
+                    className="w-full rounded-xl border border-primary-wine/20 bg-primary-darkblue px-4 py-3 text-secondary-text placeholder:text-secondary-muted uppercase outline-none transition focus:border-primary-blood focus:ring-2 focus:ring-primary-blood/20"
                   />
                 </div>
 
