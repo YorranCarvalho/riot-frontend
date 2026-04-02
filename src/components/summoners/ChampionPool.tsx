@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import type { ChampionPoolRow } from "../../types/summoner";
+import type { ChampionPoolRaw } from "../../types/summoner";
 
 interface ChampionPoolProps {
-  champions: ChampionPoolRow[];
+  champions: ChampionPoolRaw[];
 }
 
 type SortKey =
@@ -44,12 +44,39 @@ function SortArrow({
   );
 }
 
+function safeNumber(value: unknown, fallback = 0) {
+  return typeof value === "number" && !Number.isNaN(value) ? value : fallback;
+}
+
 export default function ChampionPool({ champions }: ChampionPoolProps) {
   const [sortKey, setSortKey] = useState<SortKey>("games");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
+  const normalizedChampions = useMemo(() => {
+    return champions.map((champion) => ({
+      ...champion,
+      games: safeNumber(champion.games),
+      wins: safeNumber(champion.wins),
+      losses: safeNumber(champion.losses),
+      winRate: safeNumber(champion.winRate),
+
+      kda: safeNumber(champion.kda, safeNumber(champion.averageKda)),
+
+      avgCs: safeNumber(champion.avgCs),
+      avgGold: safeNumber(champion.avgGold),
+
+      avgKills: safeNumber(champion.avgKills),
+      avgDeaths: safeNumber(champion.avgDeaths),
+      avgAssists: safeNumber(champion.avgAssists),
+
+      recentTrend: Array.isArray(champion.recentTrend)
+        ? champion.recentTrend
+        : [],
+    }));
+  }, [champions]);
+
   const sortedChampions = useMemo(() => {
-    const items = [...champions];
+    const items = [...normalizedChampions];
 
     items.sort((a, b) => {
       const aValue = a[sortKey];
@@ -65,7 +92,7 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
     });
 
     return items;
-  }, [champions, sortKey, sortDirection]);
+  }, [normalizedChampions, sortKey, sortDirection]);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -103,7 +130,7 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
         </div>
 
         <span className="rounded-full bg-white/5 px-3 py-1 text-sm text-secondary-text/70">
-          {champions.length} campeões
+          {normalizedChampions.length} campeões
         </span>
       </div>
 
@@ -196,7 +223,7 @@ export default function ChampionPool({ champions }: ChampionPoolProps) {
 
                 <td className="rounded-r-2xl px-2 py-4 align-middle">
                   <div className="flex justify-center gap-1.5">
-                    {(champion.recentTrend ?? []).slice(0, 5).map((result, index) => (
+                    {champion.recentTrend.slice(0, 5).map((result, index) => (
                       <span
                         key={`${champion.championName}-${index}-${result}`}
                         title={result === "W" ? "Vitória" : "Derrota"}

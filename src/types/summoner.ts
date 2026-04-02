@@ -42,12 +42,32 @@ export type ChampionPoolRow = {
   wins: number;
   losses: number;
   winRate: number;
+  kda: number;
   avgKills: number;
   avgDeaths: number;
   avgAssists: number;
-  kda: number;
   avgCs: number;
   avgGold: number;
+  recentTrend: ("W" | "L")[];
+};
+
+export type ChampionPoolRaw = {
+  championName: string;
+  games?: number;
+  wins?: number;
+  losses?: number;
+  winRate?: number;
+
+  kda?: number;
+  averageKda?: number;
+
+  avgCs?: number;
+  avgGold?: number;
+
+  avgKills?: number;
+  avgDeaths?: number;
+  avgAssists?: number;
+
   recentTrend?: ("W" | "L")[];
 };
 
@@ -66,6 +86,9 @@ export type SummonerProfile = {
     averageKda: number;
     mostPlayedRole: string;
   };
+  
+  scores: PlayerScores;
+
   recentMatches: Match[];
   traits: ScoutTrait[];
   ranked: {
@@ -135,3 +158,15 @@ export type MatchDetailsResponse = {
   blueTeam: MatchDetailTeam;
   redTeam: MatchDetailTeam;
 };
+
+export interface PlayerScores {
+  performanceScore: number;
+  kdaScore: number;
+  csScore: number;
+  damageScore: number;
+  goldScore: number;
+  visionScore: number;
+  winRateScore: number;
+  deathScore: number;
+  consistencyScore: number;
+}

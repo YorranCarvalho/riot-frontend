@@ -13,11 +13,39 @@ interface Props {
     averageKda: number;
     mostPlayedRole: string;
   };
+  scores: {
+    performanceScore: number;
+    kdaScore: number;
+    csScore: number;
+    damageScore: number;
+    goldScore: number;
+    visionScore: number;
+    winRateScore: number;
+    deathScore: number;
+    consistencyScore: number;
+  };
 }
 
-export default function OverviewBanner({ info, stats }: Props) {
+const getScoreColor = (score: number) => {
+  if (score >= 85) return "text-emerald-400";
+  if (score >= 70) return "text-cyan-400";
+  if (score >= 55) return "text-yellow-300";
+  return "text-rose-400";
+};
+
+const getScoreBadgeStyle = (score: number) => {
+  if (score >= 85) return "bg-emerald-500/15 text-emerald-300";
+  if (score >= 70) return "bg-cyan-500/15 text-cyan-300";
+  if (score >= 55) return "bg-yellow-500/15 text-yellow-300";
+  return "bg-rose-500/15 text-rose-300";
+};
+
+export default function OverviewBanner({ info, stats, scores }: Props) {
   const totalGames = stats.wins + stats.losses;
-  const winRate = totalGames > 0 ? ((stats.wins / totalGames) * 100).toFixed(1) : "0.0";
+  const winRate =
+    totalGames > 0 ? ((stats.wins / totalGames) * 100).toFixed(1) : "0.0";
+
+  const performanceScore = Number(scores.performanceScore?.toFixed?.(0) ?? 0);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-primary-blue shadow-xl">
@@ -56,31 +84,59 @@ export default function OverviewBanner({ info, stats }: Props) {
                 <span className="rounded-full bg-sky-500/15 px-3 py-1 text-sky-300">
                   {stats.mostPlayedRole}
                 </span>
+                <span
+                  className={`rounded-full px-3 py-1 font-semibold ${getScoreBadgeStyle(
+                    performanceScore
+                  )}`}
+                >
+                  Score {performanceScore}
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5">
-        <div className="rounded-xl bg-black/15 p-4 border border-white/5">
-          <p className="text-xs uppercase tracking-wide text-secondary-text/60">Partidas</p>
+      <div className="grid grid-cols-2 gap-4 p-5 md:grid-cols-3 xl:grid-cols-5">
+        <div className="rounded-xl border border-white/5 bg-black/15 p-4">
+          <p className="text-xs uppercase tracking-wide text-secondary-text/60">
+            Partidas
+          </p>
           <p className="mt-2 text-2xl font-bold text-white">{totalGames}</p>
         </div>
 
-        <div className="rounded-xl bg-black/15 p-4 border border-white/5">
-          <p className="text-xs uppercase tracking-wide text-secondary-text/60">Win Rate</p>
+        <div className="rounded-xl border border-white/5 bg-black/15 p-4">
+          <p className="text-xs uppercase tracking-wide text-secondary-text/60">
+            Win Rate
+          </p>
           <p className="mt-2 text-2xl font-bold text-emerald-300">{winRate}%</p>
         </div>
 
-        <div className="rounded-xl bg-black/15 p-4 border border-white/5">
-          <p className="text-xs uppercase tracking-wide text-secondary-text/60">KDA médio</p>
-          <p className="mt-2 text-2xl font-bold text-yellow-300">{stats.averageKda}</p>
+        <div className="rounded-xl border border-white/5 bg-black/15 p-4">
+          <p className="text-xs uppercase tracking-wide text-secondary-text/60">
+            KDA médio
+          </p>
+          <p className="mt-2 text-2xl font-bold text-yellow-300">
+            {stats.averageKda}
+          </p>
         </div>
 
-        <div className="rounded-xl bg-black/15 p-4 border border-white/5">
-          <p className="text-xs uppercase tracking-wide text-secondary-text/60">Main Role</p>
-          <p className="mt-2 text-2xl font-bold text-sky-300">{stats.mostPlayedRole}</p>
+        <div className="rounded-xl border border-white/5 bg-black/15 p-4">
+          <p className="text-xs uppercase tracking-wide text-secondary-text/60">
+            Main Role
+          </p>
+          <p className="mt-2 text-2xl font-bold text-sky-300">
+            {stats.mostPlayedRole}
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/5 p-4">
+          <p className="text-xs uppercase tracking-wide text-secondary-text/60">
+            Performance Score
+          </p>
+          <p className={`mt-2 text-3xl font-extrabold ${getScoreColor(performanceScore)}`}>
+            {performanceScore}
+          </p>
         </div>
       </div>
     </div>

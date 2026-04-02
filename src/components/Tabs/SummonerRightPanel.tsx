@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ChampionPool from "../summoners/ChampionPool";
 import MatchHistory from "../summoners/MatchHistory";
 import ScoutIntelligence from "../summoners/ScoutIntelligence";
@@ -39,7 +39,7 @@ export default function SummonerRightPanel({
     return buildScoutAnalysis(filteredMatches, championPool);
   }, [filteredMatches, championPool]);
 
-  useMemo(() => {
+  useEffect(() => {
     onDerivedTraitsChange?.(analysis.derivedTraits);
   }, [analysis.derivedTraits, onDerivedTraitsChange]);
 

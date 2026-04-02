@@ -22,7 +22,7 @@ export function useSummoner(name?: string, tag?: string) {
 
       try {
         const response = await axios.get<SummonerProfile>(
-          `http://localhost:3001/summoner/profile/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`
+          `http://localhost:3001/scout/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`
         );
 
         if (!cancelled) {

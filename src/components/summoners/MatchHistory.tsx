@@ -3,6 +3,8 @@ import { getChampionIconUrl, getItemIconUrl } from "../../constants/game";
 import { getMatchDetails } from "../../services/matches";
 import type { Match, MatchDetailsResponse } from "../../types/summoner";
 import MatchDetailsPanel from "./MatchDetailPanel";
+import { getSummonerSpellIconUrl } from "../../constants/summonerSpells";
+import { formatMatchDateTime } from "../../constants/dateMatch";
 
 interface Props {
   matches: Match[];
@@ -86,13 +88,28 @@ export default function MatchHistory({ matches, puuid }: Props) {
                       className="h-16 w-16 rounded-xl"
                     />
 
+                    <div className="flex flex-col gap-1">
+                      {match.summonerSpells?.map((spellId) => {
+                        const icon = getSummonerSpellIconUrl(spellId);
+                        if (!icon) return null;
+
+                        return (
+                          <img
+                            key={`${match.matchId}-spell-${spellId}`}
+                            src={icon}
+                            alt={`Spell ${spellId}`}
+                            className="h-7 w-7 rounded-md border border-white/10"
+                          />
+                        );
+                      })}
+                    </div>
+
                     <div className="min-w-0">
                       <p className="text-lg font-semibold text-white">
                         {match.championName}
                       </p>
-                      <p className="text-sm text-secondary-text/65">
-                        {match.win ? "Vitória" : "Derrota"} • {match.role} •{" "}
-                        {formatDuration(match.gameDuration)}
+                      <p className="text-sm text-white/60">
+                        {match.win ? "Vitória" : "Derrota"} • {match.role} • {formatDuration(match.gameDuration)} • {formatMatchDateTime(match.gameCreation)}
                       </p>
                       <p className="mt-1 text-sm text-secondary-text/90">
                         {match.kills}/{match.deaths}/{match.assists} • KDA {match.kda}

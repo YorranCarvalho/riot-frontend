@@ -46,7 +46,7 @@ export default function Summoner() {
             </aside>
 
             <main className="space-y-6 min-w-0">
-              <OverviewBanner info={data.basic} stats={data.stats} />
+              <OverviewBanner info={data.basic} stats={data.stats} scores={data.scores}/>
 
               <SummonerRightPanel
                 matches={data.recentMatches}
