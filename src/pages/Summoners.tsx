@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useSummoner } from "../hook/useSummoner";
 import MatchHistory from "../components/summoners/MatchHistory";
-import StatsCards from "../components/summoners/StatsCards";
 import SummonerSearchBar from "../components/summoners/SummonerSearchBar";
 import SummonerNotFound from "../components/summoners/SummonerNotFound";
 import ProfileHeader from "../components/summoners/ProfilerHeader";
 import PoroLoader from "../components/loader/PoroLoader";
 import OverviewBanner from "../components/summoners/OverviewBanner";
 import ScoutTraits from "../components/summoners/ScoutTraits";
+import RankedHistoryCards from "../components/summoners/StatsCards";
 
 export default function Summoner() {
   const { name, tag } = useParams<{ name: string; tag: string }>();
@@ -35,7 +35,7 @@ export default function Summoner() {
             <aside className="space-y-6">
               <ProfileHeader info={data.basic} />
               <ScoutTraits traits={data.traits} />
-              <StatsCards stats={data.stats} />
+              <RankedHistoryCards ranked={data.ranked} />
             </aside>
 
             <main className="space-y-6 min-w-0">

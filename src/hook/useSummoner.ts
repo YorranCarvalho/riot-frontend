@@ -27,6 +27,18 @@ type ScoutTrait = {
   description: string;
 };
 
+type RankedSeason = {
+  season: string;
+  tier: string;
+  lp: number;
+};
+
+type RankedQueue = {
+  currentTier: string;
+  currentLp: number;
+  seasons: RankedSeason[];
+};
+
 type SummonerProfile = {
   basic: {
     puuid: string;
@@ -44,6 +56,10 @@ type SummonerProfile = {
   };
   recentMatches: Match[];
   traits: ScoutTrait[];
+  ranked: {
+    soloDuo: RankedQueue;
+    flex: RankedQueue;
+  };
 };
 
 export function useSummoner(name?: string, tag?: string) {
