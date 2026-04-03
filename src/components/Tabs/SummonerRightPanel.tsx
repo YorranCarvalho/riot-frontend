@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ChampionPool from "../summoners/ChampionPool";
 import MatchHistory from "../summoners/MatchHistory";
 import ScoutIntelligence from "../summoners/ScoutIntelligence";
@@ -34,6 +34,15 @@ export default function SummonerRightPanel({
   const [page, setPage] = useState(1);
   const limit = 10;
 
+  const historySectionRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToHistoryTop = () => {
+    historySectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   const { data: matchesResponse, loading: matchesLoading } = useSummonerMatches(
     name,
     tag,
@@ -55,16 +64,41 @@ export default function SummonerRightPanel({
     onDerivedTraitsChange?.(analysis.derivedTraits);
   }, [analysis.derivedTraits, onDerivedTraitsChange]);
 
+  const handleChangeRole = (value: RoleFilter) => {
+    setRoleFilter(value);
+    setPage(1);
+    requestAnimationFrame(scrollToHistoryTop);
+  };
+
+  const handleChangeQueue = (value: QueueFilter) => {
+    setQueueFilter(value);
+    setPage(1);
+    requestAnimationFrame(scrollToHistoryTop);
+  };
+
+  const handleNextPage = () => {
+    setPage((prev) => prev + 1);
+    requestAnimationFrame(scrollToHistoryTop);
+  };
+
+  const handlePreviousPage = () => {
+    setPage((prev) => Math.max(1, prev - 1));
+    requestAnimationFrame(scrollToHistoryTop);
+  };
+
   return (
     <div className="space-y-6">
       <ScoutIntelligence insights={analysis.intelligence} />
       <RoleAnalysisCard matches={filteredMatches} />
 
-      <div className="rounded-2xl border border-white/10 bg-[#111122] p-3 shadow-xl">
+      <div
+        ref={historySectionRef}
+        className="rounded-2xl border border-white/10 bg-[#111122] p-3 shadow-xl"
+      >
         <div className="mb-4 flex flex-wrap gap-3">
           <select
             value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value as RoleFilter)}
+            onChange={(e) => handleChangeRole(e.target.value as RoleFilter)}
             className="rounded-lg border border-white/10 bg-[#19192b] px-3 py-2 text-sm text-white outline-none focus:border-fuchsia-500/40 focus:ring-0"
           >
             <option value="all" className="bg-[#19192b] text-white">Todas as roles</option>
@@ -78,7 +112,7 @@ export default function SummonerRightPanel({
 
           <select
             value={queueFilter}
-            onChange={(e) => setQueueFilter(e.target.value as QueueFilter)}
+            onChange={(e) => handleChangeQueue(e.target.value as QueueFilter)}
             className="rounded-lg border border-white/10 bg-[#19192b] px-3 py-2 text-sm text-white outline-none focus:border-fuchsia-500/40 focus:ring-0"
           >
             <option value="all">Todas as queues</option>
@@ -126,8 +160,8 @@ export default function SummonerRightPanel({
               totalPages={matchesResponse?.pagination.totalPages ?? 1}
               hasNextPage={matchesResponse?.pagination.hasNextPage ?? false}
               hasPreviousPage={matchesResponse?.pagination.hasPreviousPage ?? false}
-              onNextPage={() => setPage((prev) => prev + 1)}
-              onPreviousPage={() => setPage((prev) => Math.max(1, prev - 1))}
+              onNextPage={handleNextPage}
+              onPreviousPage={handlePreviousPage}
             />
           )
         ) : (

@@ -4,6 +4,8 @@ import Summoner from "./pages/lol/Summoners";
 import Home from "./pages/inde";
 import HomeTFT from "./pages/tft/HomeTFT";
 import HomeValorant from "./pages/valorant/HomeValorant";
+import Strategist from "./pages/tft/Strategist";
+import Agent from "./pages/valorant/Agent";
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
           <Route path="/tft" element={<HomeTFT />} />
           <Route path="/valorant" element={<HomeValorant />} />
           <Route path="/summoner/:name/:tag" element={<Summoner />} />
+          <Route path="/strategist/:name/:tag" element={<Strategist />} />
+          <Route path="/agent/:name/:tag" element={<Agent />} />
         </Routes>
       </div>
     </BrowserRouter>
