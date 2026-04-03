@@ -6,33 +6,46 @@ import {
   buildScoutAnalysis,
   filterMatches,
   type QueueFilter,
-  type RangeFilter,
   type RoleFilter,
 } from "../../utils/scoutAnalysis";
-import type { ChampionPoolRow, Match, ScoutTrait } from "../../types/summoner";
+import type { ChampionPoolRow, ScoutTrait } from "../../types/summoner";
 import RoleAnalysisCard from "../summoners/RoleAnalysisCard";
+import PoroLoader from "../loader/PoroLoader";
+import { useSummonerMatches } from "../../hook/useSummonerMatchs";
 
 interface SummonerRightPanelProps {
-  matches: Match[];
+  name: string;
+  tag: string;
   puuid: string;
   championPool?: ChampionPoolRow[];
   onDerivedTraitsChange?: (traits: ScoutTrait[]) => void;
 }
 
 export default function SummonerRightPanel({
-  matches,
+  name,
+  tag,
   puuid,
   championPool,
   onDerivedTraitsChange,
 }: SummonerRightPanelProps) {
   const [selectedTab, setSelectedTab] = useState<"match-history" | "champion-pool">("match-history");
-  const [rangeFilter, setRangeFilter] = useState<RangeFilter>(10);
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("all");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const { data: matchesResponse, loading: matchesLoading } = useSummonerMatches(
+    name,
+    tag,
+    page,
+    limit
+  );
+
+  const matches = matchesResponse?.items ?? [];
 
   const filteredMatches = useMemo(() => {
-    return filterMatches(matches, rangeFilter, queueFilter, roleFilter);
-  }, [matches, rangeFilter, queueFilter, roleFilter]);
+    return filterMatches(matches, 10, queueFilter, roleFilter);
+  }, [matches, queueFilter, roleFilter]);
 
   const analysis = useMemo(() => {
     return buildScoutAnalysis(filteredMatches, championPool);
@@ -49,16 +62,6 @@ export default function SummonerRightPanel({
 
       <div className="rounded-2xl border border-white/10 bg-[#111122] p-3 shadow-xl">
         <div className="mb-4 flex flex-wrap gap-3">
-          <select
-            value={rangeFilter}
-            onChange={(e) => setRangeFilter(Number(e.target.value) as RangeFilter)}
-            className="rounded-lg border border-white/10 bg-[#19192b] px-3 py-2 text-sm text-white outline-none focus:border-fuchsia-500/40 focus:ring-0"
-          >
-            <option value={10} className="bg-[#19192b] text-white">Últimos 10 jogos</option>
-            <option value={20} className="bg-[#19192b] text-white">Últimos 20 jogos</option>
-            <option value={30} className="bg-[#19192b] text-white">Últimos 30 jogos</option>
-          </select>
-
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value as RoleFilter)}
@@ -113,11 +116,24 @@ export default function SummonerRightPanel({
         </div>
 
         {selectedTab === "match-history" ? (
-          <MatchHistory matches={filteredMatches} puuid={puuid} />
+          matchesLoading ? (
+            <PoroLoader />
+          ) : (
+            <MatchHistory
+              matches={filteredMatches}
+              puuid={puuid}
+              page={matchesResponse?.pagination.page ?? 1}
+              totalPages={matchesResponse?.pagination.totalPages ?? 1}
+              hasNextPage={matchesResponse?.pagination.hasNextPage ?? false}
+              hasPreviousPage={matchesResponse?.pagination.hasPreviousPage ?? false}
+              onNextPage={() => setPage((prev) => prev + 1)}
+              onPreviousPage={() => setPage((prev) => Math.max(1, prev - 1))}
+            />
+          )
         ) : (
           <ChampionPool
             champions={analysis.championPool.map((champion) => {
-              const recentTrend = filteredMatches
+              const recentTrend = matches
                 .filter((match) => match.championName === champion.championName)
                 .slice(0, 5)
                 .map((match) => (match.win ? "W" : "L"));

@@ -1,28 +1,32 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import type { SummonerProfile } from "../types/summoner";
-import { getSummonerProfile } from "../services/scout";
+import { getSummonerMatches, type PaginatedMatchesResponse } from "../services/scout";
 
-export function useSummoner(name?: string, tag?: string) {
-  const [data, setData] = useState<SummonerProfile | null>(null);
+export function useSummonerMatches(
+  name?: string,
+  tag?: string,
+  page = 1,
+  limit = 10
+) {
+  const [data, setData] = useState<PaginatedMatchesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!name || !tag) {
-      setLoading(false);
       setData(null);
+      setLoading(false);
       return;
     }
 
     let cancelled = false;
 
-    const fetchSummoner = async () => {
+    const fetchMatches = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await getSummonerProfile(name, tag);
+        const response = await getSummonerMatches(name, tag, page, limit);
 
         if (!cancelled) {
           setData(response);
@@ -33,11 +37,7 @@ export function useSummoner(name?: string, tag?: string) {
         setData(null);
 
         if (axios.isAxiosError(err)) {
-          if (err.response?.status === 404) {
-            setError("SUMMONER_NOT_FOUND");
-          } else {
-            setError("GENERIC_ERROR");
-          }
+          setError(err.response?.status === 404 ? "SUMMONER_NOT_FOUND" : "GENERIC_ERROR");
         } else {
           setError("GENERIC_ERROR");
         }
@@ -48,12 +48,12 @@ export function useSummoner(name?: string, tag?: string) {
       }
     };
 
-    fetchSummoner();
+    fetchMatches();
 
     return () => {
       cancelled = true;
     };
-  }, [name, tag]);
+  }, [name, tag, page, limit]);
 
   return { data, loading, error };
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getChampionIconUrl, getItemIconUrl } from "../../constants/game";
-import { getMatchDetails } from "../../services/matches";
+import { getMatchDetails } from "../../services/scout";
 import type { Match, MatchDetailsResponse } from "../../types/summoner";
 import MatchDetailsPanel from "./MatchDetailPanel";
 import { getSummonerSpellIconUrl } from "../../constants/summonerSpells";
@@ -10,6 +10,12 @@ import { getQueueBadgeClasses, getQueueLabel } from "../../utils/riotQueue";
 interface Props {
   matches: Match[];
   puuid: string;
+  page: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  onNextPage: () => void;
+  onPreviousPage: () => void;
 }
 
 function formatDuration(seconds: number) {
@@ -18,7 +24,16 @@ function formatDuration(seconds: number) {
   return `${min}m ${String(sec).padStart(2, "0")}s`;
 }
 
-export default function MatchHistory({ matches, puuid }: Props) {
+export default function MatchHistory({
+  matches,
+  puuid,
+  page,
+  totalPages,
+  hasNextPage,
+  hasPreviousPage,
+  onNextPage,
+  onPreviousPage,
+}: Props) {
   const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
   const [loadingMatchId, setLoadingMatchId] = useState<string | null>(null);
   const [detailsCache, setDetailsCache] = useState<Record<string, MatchDetailsResponse>>({});
@@ -56,12 +71,12 @@ export default function MatchHistory({ matches, puuid }: Props) {
         <div>
           <h3 className="text-2xl font-bold text-white">Histórico de partidas</h3>
           <p className="text-sm text-secondary-text/60">
-            Últimas partidas encontradas para este invocador
+            Partidas armazenadas para este invocador
           </p>
         </div>
 
         <span className="rounded-full bg-white/5 px-3 py-1 text-sm text-secondary-text/70">
-          {matches.length} partidas
+          Página {page} de {Math.max(1, totalPages)}
         </span>
       </div>
 
@@ -198,6 +213,26 @@ export default function MatchHistory({ matches, puuid }: Props) {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-6 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          onClick={onPreviousPage}
+          disabled={!hasPreviousPage}
+          className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition disabled:cursor-not-allowed disabled:opacity-40 hover:bg-white/10"
+        >
+          Anterior
+        </button>
+
+        <button
+          type="button"
+          onClick={onNextPage}
+          disabled={!hasNextPage}
+          className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition disabled:cursor-not-allowed disabled:opacity-40 hover:bg-white/10"
+        >
+          Próxima
+        </button>
       </div>
     </div>
   );

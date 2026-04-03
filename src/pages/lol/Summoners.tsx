@@ -1,19 +1,19 @@
 import { useParams } from "react-router-dom";
-import { useSummoner } from "../hook/useSummoner";
-import SummonerSearchBar from "../components/summoners/SummonerSearchBar";
-import SummonerNotFound from "../components/summoners/SummonerNotFound";
-import ProfileHeader from "../components/summoners/ProfilerHeader";
-import PoroLoader from "../components/loader/PoroLoader";
-import OverviewBanner from "../components/summoners/OverviewBanner";
-import ScoutTraits from "../components/summoners/ScoutTraits";
-import RankedHistoryCards from "../components/summoners/StatsCards";
-import SummonerRightPanel from "../components/Tabs/SummonerRightPanel";
+import { useSummoner } from "../../hook/useSummoner";
+import SummonerSearchBar from "../../components/summoners/SummonerSearchBar";
+import SummonerNotFound from "../../components/summoners/SummonerNotFound";
+import ProfileHeader from "../../components/summoners/ProfilerHeader";
+import PoroLoader from "../../components/loader/PoroLoader";
+import OverviewBanner from "../../components/summoners/OverviewBanner";
+import ScoutTraits from "../../components/summoners/ScoutTraits";
+import RankedHistoryCards from "../../components/summoners/StatsCards";
+import SummonerRightPanel from "../../components/Tabs/SummonerRightPanel";
 import { useMemo, useState } from "react";
-import type { ScoutTrait } from "../types/summoner";
-import ScoutScoreCard from "../components/summoners/ScoutScoreCard";
-import TrendsCard from "../components/summoners/TrendsCard";
-import WarningsCard from "../components/summoners/WarningsCard";
-import OverviewCard from "../components/summoners/OverviewCard";
+import type { ScoutTrait } from "../../types/summoner";
+import ScoutScoreCard from "../../components/summoners/ScoutScoreCard";
+import TrendsCard from "../../components/summoners/TrendsCard";
+import WarningsCard from "../../components/summoners/WarningsCard";
+import OverviewCard from "../../components/summoners/OverviewCard";
 
 export default function Summoner() {
   const { name, tag } = useParams<{ name: string; tag: string }>();
@@ -72,7 +72,9 @@ export default function Summoner() {
               )}
 
               <SummonerRightPanel
-                matches={data.recentMatches}
+                key={`${name ?? ""}-${tag ?? ""}`}
+                name={name ?? ""}
+                tag={tag ?? ""}
                 puuid={data.basic.puuid}
                 championPool={data.championPool}
                 onDerivedTraitsChange={setDerivedTraits}
