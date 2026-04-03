@@ -63,6 +63,7 @@ export type ChampionPoolRaw = {
   avgCsPerMin?: number;
   avgDamagePerMin?: number;
   trend?: "up" | "stable" | "down";
+  recentTrend?: ("W" | "L")[];
 };
 
 export type SummonerProfile = {

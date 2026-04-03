@@ -1,7 +1,12 @@
 import type { Match, ChampionPoolRow, ScoutTrait } from "../types/summoner";
 
 
-export type QueueFilter = "all" | "ranked" | "normal";
+export type QueueFilter =
+  | "all"
+  | "soloDuo"
+  | "flex"
+  | "aram"
+  | "normal";
 export type RoleFilter =
   | "all"
   | "TOP"
@@ -57,19 +62,30 @@ export function filterMatches(
 ) {
   let result = [...matches];
 
-  if (queue === "ranked") {
-    result = result.filter((match) => isRankedQueue(match.queueId));
-  }
-
-  if (queue === "normal") {
-    result = result.filter((match) => isNormalQueue(match.queueId));
-  }
+  result = filterByQueueType(result, queue);
 
   if (role !== "all") {
     result = result.filter((match) => match.role === role);
   }
 
   return result.slice(0, range);
+}
+
+export function filterByQueueType(matches: Match[], queue: QueueFilter) {
+  switch (queue) {
+    case "soloDuo":
+      return matches.filter((match) => match.queueId === 420);
+    case "flex":
+      return matches.filter((match) => match.queueId === 440);
+    case "aram":
+      return matches.filter((match) => match.queueId === 450);
+    case "normal":
+      return matches.filter((match) =>
+        [400, 430, 490].includes(match.queueId)
+      );
+    default:
+      return matches;
+  }
 }
 
 export function buildChampionPoolFromMatches(matches: Match[]): ChampionPoolRow[] {

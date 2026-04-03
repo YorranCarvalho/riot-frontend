@@ -78,15 +78,11 @@ export default function SummonerRightPanel({
             onChange={(e) => setQueueFilter(e.target.value as QueueFilter)}
             className="rounded-lg border border-white/10 bg-[#19192b] px-3 py-2 text-sm text-white outline-none focus:border-fuchsia-500/40 focus:ring-0"
           >
-            <option value="all" className="bg-[#19192b] text-white">
-              Todas as queues
-            </option>
-            <option value="ranked" className="bg-[#19192b] text-white">
-              Ranked
-            </option>
-            <option value="normal" className="bg-[#19192b] text-white">
-              Normal
-            </option>
+            <option value="all">Todas as queues</option>
+            <option value="soloDuo">Solo/Duo</option>
+            <option value="flex">Flex</option>
+            <option value="aram">ARAM</option>
+            <option value="normal">Normal</option>
           </select>
         </div>
 
@@ -119,7 +115,19 @@ export default function SummonerRightPanel({
         {selectedTab === "match-history" ? (
           <MatchHistory matches={filteredMatches} puuid={puuid} />
         ) : (
-          <ChampionPool champions={analysis.championPool} />
+          <ChampionPool
+            champions={analysis.championPool.map((champion) => {
+              const recentTrend = filteredMatches
+                .filter((match) => match.championName === champion.championName)
+                .slice(0, 5)
+                .map((match) => (match.win ? "W" : "L"));
+
+              return {
+                ...champion,
+                recentTrend,
+              };
+            })}
+          />
         )}
       </div>
     </div>

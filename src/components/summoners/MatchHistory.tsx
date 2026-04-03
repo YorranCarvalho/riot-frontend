@@ -5,6 +5,7 @@ import type { Match, MatchDetailsResponse } from "../../types/summoner";
 import MatchDetailsPanel from "./MatchDetailPanel";
 import { getSummonerSpellIconUrl } from "../../constants/summonerSpells";
 import { formatMatchDateTime } from "../../constants/dateMatch";
+import { getQueueBadgeClasses, getQueueLabel } from "../../utils/riotQueue";
 
 interface Props {
   matches: Match[];
@@ -108,9 +109,21 @@ export default function MatchHistory({ matches, puuid }: Props) {
                       <p className="text-lg font-semibold text-white">
                         {match.championName}
                       </p>
-                      <p className="text-sm text-white/60">
-                        {match.win ? "Vitória" : "Derrota"} • {match.role} • {formatDuration(match.gameDuration)} • {formatMatchDateTime(match.gameCreation)}
-                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-secondary-text/70">
+                        <span>{match.win ? "Vitória" : "Derrota"}</span>
+
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${getQueueBadgeClasses(
+                            match.queueId
+                          )}`}
+                        >
+                          {getQueueLabel(match.queueId)}
+                        </span>
+
+                        <span>• {match.role}</span>
+                        <span>• {formatDuration(match.gameDuration)}</span>
+                        <span>• {formatMatchDateTime(match.gameCreation)}</span>
+                      </div>
                       <p className="mt-1 text-sm text-secondary-text/90">
                         {match.kills}/{match.deaths}/{match.assists} • KDA {match.kda}
                       </p>
