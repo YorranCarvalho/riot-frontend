@@ -24,7 +24,7 @@ export function useTactician(name?: string, tag?: string) {
 
       try {
         const response = await getTacticianProfile(name, tag);
-
+        
         if (!cancelled) {
           setData(response);
         }

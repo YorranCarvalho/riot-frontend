@@ -62,13 +62,19 @@ function addAlias(
 ) {
   if (!key) return;
 
+  const original = key;
   const lower = key.toLowerCase();
   const normalized = normalizeKey(key);
 
+  map[original] = icon;
   map[lower] = icon;
   map[normalized] = icon;
+
+  map[original.replace(/^TFT\d+_/, "")] = icon;
   map[lower.replace(/^tft\d+_/, "")] = icon;
   map[normalized.replace(/^tft\d+/, "")] = icon;
+
+  map[original.replace(/^TFT_Item_/, "")] = icon;
   map[lower.replace(/^tft_item_/, "")] = icon;
   map[normalized.replace(/^tftitem/, "")] = icon;
 }
