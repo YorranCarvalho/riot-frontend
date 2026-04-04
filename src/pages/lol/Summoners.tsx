@@ -20,7 +20,7 @@ export default function Summoner() {
   const { data, loading, error } = useSummoner(name, tag);
   const [derivedTraits, setDerivedTraits] = useState<ScoutTrait[]>([]);
   const [pageReady, setPageReady] = useState(false);
-
+  console.log("summoner data", data);
   useEffect(() => {
     const timer = setTimeout(() => setPageReady(true), 80);
     return () => clearTimeout(timer);

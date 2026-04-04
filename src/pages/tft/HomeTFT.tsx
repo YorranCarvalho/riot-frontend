@@ -36,7 +36,6 @@ export default function HomeTFT() {
         <div className="absolute left-[-60px] top-[12%] h-[180px] w-[180px] rounded-full bg-cyan-400/10 blur-2xl" />
         <div className="absolute right-[-70px] top-[18%] h-[220px] w-[220px] rounded-full bg-primary-blood/10 blur-2xl" />
         <div className="absolute bottom-[-60px] left-[18%] h-[180px] w-[180px] rounded-full bg-secondary-peach/8 blur-2xl" />
-
         <div className="absolute inset-0 opacity-[0.03] [background-image:linear-gradient(rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:42px_42px]" />
       </div>
 
@@ -74,45 +73,6 @@ export default function HomeTFT() {
                       scout TFT com um layout mais temático e preparado para
                       composições, histórico e análise de desempenho.
                     </p>
-                  </div>
-
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    {[
-                      "Match history",
-                      "Comps e traits",
-                      "Ranked overview",
-                      "Estilo do player",
-                    ].map((item, index) => (
-                      <span
-                        key={item}
-                        className={`rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/80 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-cyan-300/10 ${
-                          loaded
-                            ? "translate-y-0 opacity-100"
-                            : "translate-y-2 opacity-0"
-                        }`}
-                        style={{ transitionDelay: `${140 + index * 70}ms` }}
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-10 hidden lg:flex items-end justify-between gap-6">
-                  <div className="max-w-sm rounded-3xl border border-white/10 bg-black/15 p-5">
-                    <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/70">
-                      Future-ready
-                    </p>
-                    <p className="mt-3 text-sm leading-6 text-white/70">
-                      Uma home própria para TFT, com identidade visual separada
-                      da experiência de LoL.
-                    </p>
-                  </div>
-
-                  <div className="relative h-32 w-32 shrink-0">
-                    <div className="absolute inset-0 rounded-full border border-cyan-300/20 bg-cyan-300/10" />
-                    <div className="absolute inset-[20%] rounded-full border border-white/15" />
-                    <div className="absolute inset-[38%] rounded-full bg-cyan-300/20" />
                   </div>
                 </div>
               </section>
@@ -185,26 +145,6 @@ export default function HomeTFT() {
                         </span>
                       </span>
                     </button>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/60">
-                          Example
-                        </p>
-                        <p className="mt-2 text-sm text-white/75">
-                          Bebe872 + KR1
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/60">
-                          Status
-                        </p>
-                        <p className="mt-2 text-sm text-white/75">
-                          Backend TFT em preparação
-                        </p>
-                      </div>
-                    </div>
                   </form>
                 </div>
               </section>
