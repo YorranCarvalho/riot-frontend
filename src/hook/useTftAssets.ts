@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { TftAssets } from "../utils/tft/tftAssets";
 
 type TftChampionEntry = {
   name?: string;
@@ -21,12 +22,7 @@ type TftTraitEntry = {
   icon_path?: string;
 };
 
-type AssetsState = {
-  champions: Record<string, string>;
-  items: Record<string, string>;
-  traits: Record<string, string>;
-  loading: boolean;
-};
+type AssetsState = TftAssets;
 
 function buildChampionIconUrl(characterId?: string | null) {
   if (!characterId) return "";

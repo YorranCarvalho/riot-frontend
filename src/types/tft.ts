@@ -21,20 +21,48 @@ export interface TacticianMatchUnit {
   chosen: string | null;
 }
 
+export interface TacticianMatchCompanion {
+  contentId: string | null;
+  itemId: number | null;
+  skinId: number | null;
+  species: string | null;
+}
+
+export interface TacticianLobbyPlayer {
+  puuid: string;
+  riotIdGameName: string | null;
+  riotIdTagLine: string | null;
+  placement: number | null;
+  level: number | null;
+  lastRound: number | null;
+  playersEliminated: number | null;
+  timeEliminated: number | null;
+  totalDamageToPlayers: number | null;
+  augments: string[];
+  traits: TacticianMatchTrait[];
+  units: TacticianMatchUnit[];
+  companion: TacticianMatchCompanion | null;
+  isCurrentPlayer: boolean;
+}
+
 export interface TacticianMatch {
   matchId: string;
   queueId: number | null;
   queueLabel: string;
   gameDatetime: number | null;
   gameLengthSeconds: number | null;
+  patch: string;
   placement: number | null;
   level: number | null;
   lastRound: number | null;
   playersEliminated: number | null;
   timeEliminated: number | null;
+  totalDamageToPlayers: number | null;
   augments: string[];
   traits: TacticianMatchTrait[];
   units: TacticianMatchUnit[];
+  companion: TacticianMatchCompanion | null;
+  lobby: TacticianLobbyPlayer[];
 }
 
 export interface TftOverview {
@@ -47,12 +75,29 @@ export interface TftOverview {
   avgLastRound: number;
   avgPlayersEliminated: number;
   estimatedDamage: number;
+
   favoriteChampionId: string | null;
   favoriteChampionCount: number;
   mostUsedItemId: string | null;
   mostUsedItemCount: number;
   mostUsedTraitId: string | null;
   mostUsedTraitCount: number;
+
+  bestPlacement: number | null;
+  worstPlacement: number | null;
+  placementSpread: number | null;
+  avgTop4Placement: number | null;
+  avgBottom4Placement: number | null;
+  consistencyScore: number | null;
+
+  placementDistribution: Record<number, number>;
+  recentForm: {
+    avgLast5: number;
+    avgLast10: number;
+    trend: "up" | "down" | "stable";
+  };
+
+  insights: string[];
 }
 
 export interface TftTopComp {
