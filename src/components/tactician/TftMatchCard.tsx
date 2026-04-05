@@ -20,7 +20,7 @@ export function TftMatchCard({ match, assets }: Props) {
   );
 
   return (
-    <article className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0b1324]/90 shadow-[0_12px_50px_rgba(0,0,0,0.28)]">
+    <article className="overflow-visible rounded-[28px] border border-white/10 bg-[#0b1324]/90 shadow-[0_12px_50px_rgba(0,0,0,0.28)]">
       <div className="p-5 md:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex min-w-0 gap-4">
@@ -54,7 +54,7 @@ export function TftMatchCard({ match, assets }: Props) {
               </div>
 
               <div className="mt-4">
-                <TftTraitChips traits={match.traits} limit={6} />
+                <TftTraitChips traits={match.traits} limit={6} assets={assets}/>
               </div>
             </div>
           </div>

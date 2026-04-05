@@ -16,10 +16,19 @@ type TftItemEntry = {
   squareIconPath?: string;
 };
 
+type TftTraitSetEntry = {
+  min_units?: number;
+  max_units?: number;
+  style_id?: number;
+  style_name?: string;
+};
+
 type TftTraitEntry = {
   display_name?: string;
   trait_id?: string;
   icon_path?: string;
+  tooltip_text?: string;
+  conditional_trait_sets?: TftTraitSetEntry[];
 };
 
 type AssetsState = TftAssets;
@@ -75,11 +84,45 @@ function addAlias(
   map[normalized.replace(/^tftitem/, "")] = icon;
 }
 
+function addTraitMetaAlias<T>(
+  map: Record<string, T>,
+  key: string | undefined,
+  value: T
+) {
+  if (!key) return;
+
+  const original = key;
+  const lower = key.toLowerCase();
+  const normalized = normalizeKey(key);
+
+  map[original] = value;
+  map[lower] = value;
+  map[normalized] = value;
+
+  map[original.replace(/^TFT\d+_/, "")] = value;
+  map[lower.replace(/^tft\d+_/, "")] = value;
+  map[normalized.replace(/^tft\d+/, "")] = value;
+}
+
+function stripHtml(text?: string | null) {
+  if (!text) return "";
+
+  return text
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .trim();
+}
+
 export function useTftAssets() {
   const [state, setState] = useState<AssetsState>({
     champions: {},
     items: {},
     traits: {},
+    traitMeta: {},
     loading: true,
   });
 
@@ -107,6 +150,7 @@ export function useTftAssets() {
         const champions: Record<string, string> = {};
         const items: Record<string, string> = {};
         const traits: Record<string, string> = {};
+        const traitMeta: AssetsState["traitMeta"] = {};
 
         for (const champion of championsJson) {
           const characterId = champion.character_record?.character_id;
@@ -132,10 +176,28 @@ export function useTftAssets() {
         for (const trait of traitsJson) {
           const icon = buildTraitIconUrl(trait.icon_path);
 
-          if (!icon) continue;
+          if (icon) {
+            addAlias(traits, trait.trait_id, icon);
+            addAlias(traits, trait.display_name, icon);
+          }
 
-          addAlias(traits, trait.trait_id, icon);
-          addAlias(traits, trait.display_name, icon);
+          const metaValue = {
+            id: trait.trait_id ?? "",
+            name: trait.display_name ?? trait.trait_id ?? "Unknown Trait",
+            icon,
+            tooltip: stripHtml(trait.tooltip_text),
+            conditionalTraitSets: (trait.conditional_trait_sets ?? []).map(
+              (entry) => ({
+                minUnits: entry.min_units,
+                maxUnits: entry.max_units,
+                styleId: entry.style_id,
+                styleName: entry.style_name,
+              })
+            ),
+          };
+
+          addTraitMetaAlias(traitMeta, trait.trait_id, metaValue);
+          addTraitMetaAlias(traitMeta, trait.display_name, metaValue);
         }
 
         if (!cancelled) {
@@ -143,6 +205,7 @@ export function useTftAssets() {
             champions,
             items,
             traits,
+            traitMeta,
             loading: false,
           });
         }
@@ -154,6 +217,7 @@ export function useTftAssets() {
             champions: {},
             items: {},
             traits: {},
+            traitMeta: {},
             loading: false,
           });
         }

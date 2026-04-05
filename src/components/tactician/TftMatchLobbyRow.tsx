@@ -49,7 +49,7 @@ export function TftMatchLobbyRow({ player, assets }: Props) {
           </div>
 
           <div className="mt-3">
-            <TftTraitChips traits={player.traits} limit={6} />
+            <TftTraitChips traits={player.traits} assets={assets} limit={6} />
           </div>
         </div>
 
