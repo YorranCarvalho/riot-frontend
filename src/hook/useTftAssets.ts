@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import type { TftAssets } from "../utils/tft/tftAssets";
-
-type TftChampionEntry = {
-  name?: string;
-  character_record?: {
-    character_id?: string;
-    display_name?: string;
-    squareIconPath?: string;
-  };
-};
+import type { TftChampionEntry } from "../types/tactican";
+import type {
+  TftAssets,
+  TftTraitMeta,
+  TftChampionSpellMeta,
+} from "../utils/tft/tftAssets";
+import { toCDragonAssetUrl } from "../utils/tft/toCDragonAssetUrl";
 
 type TftItemEntry = {
   name?: string;
@@ -33,27 +30,17 @@ type TftTraitEntry = {
 
 type AssetsState = TftAssets;
 
-function buildChampionIconUrl(characterId?: string | null) {
+function buildChampionIconUrl(
+  squareIconPath?: string | null,
+  characterId?: string | null
+) {
+  const fromPath = toCDragonAssetUrl(squareIconPath);
+  if (fromPath) return fromPath;
+
   if (!characterId) return "";
 
   const normalized = characterId.toLowerCase();
-  return `https://raw.communitydragon.org/pbe/game/assets/characters/${normalized}/hud/${normalized}_square.tft_set16.png`;
-}
-
-function buildItemIconUrl(path?: string | null) {
-  if (!path) return "";
-
-  return `https://raw.communitydragon.org/pbe/game${path
-    .replace(/^\/lol-game-data\/assets/i, "")
-    .toLowerCase()}`;
-}
-
-function buildTraitIconUrl(path?: string | null) {
-  if (!path) return "";
-
-  return `https://raw.communitydragon.org/pbe/game${path
-    .replace(/^\/lol-game-data\/assets/i, "")
-    .toLowerCase()}`;
+  return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/characters/${normalized}/hud/${normalized}_square.tft_set16.png`;
 }
 
 function normalizeKey(value: string) {
@@ -82,6 +69,46 @@ function addAlias(
   map[original.replace(/^TFT_Item_/, "")] = icon;
   map[lower.replace(/^tft_item_/, "")] = icon;
   map[normalized.replace(/^tftitem/, "")] = icon;
+}
+
+function addChampionMetaAlias(
+  map: Record<string, TftChampionEntry>,
+  key: string | undefined,
+  champion: TftChampionEntry
+) {
+  if (!key) return;
+
+  const original = key;
+  const lower = key.toLowerCase();
+  const normalized = normalizeKey(key);
+
+  map[original] = champion;
+  map[lower] = champion;
+  map[normalized] = champion;
+
+  map[original.replace(/^TFT\d+_/, "")] = champion;
+  map[lower.replace(/^tft\d+_/, "")] = champion;
+  map[normalized.replace(/^tft\d+/, "")] = champion;
+}
+
+function addSpellMetaAlias(
+  map: Record<string, TftChampionSpellMeta>,
+  key: string | undefined,
+  value: TftChampionSpellMeta
+) {
+  if (!key) return;
+
+  const original = key;
+  const lower = key.toLowerCase();
+  const normalized = normalizeKey(key);
+
+  map[original] = value;
+  map[lower] = value;
+  map[normalized] = value;
+
+  map[original.replace(/^TFT\d+_/, "")] = value;
+  map[lower.replace(/^tft\d+_/, "")] = value;
+  map[normalized.replace(/^tft\d+/, "")] = value;
 }
 
 function addTraitMetaAlias<T>(
@@ -123,6 +150,8 @@ export function useTftAssets() {
     items: {},
     traits: {},
     traitMeta: {},
+    championMeta: {},
+    championSpellMeta: {},
     loading: true,
   });
 
@@ -150,23 +179,44 @@ export function useTftAssets() {
         const champions: Record<string, string> = {};
         const items: Record<string, string> = {};
         const traits: Record<string, string> = {};
-        const traitMeta: AssetsState["traitMeta"] = {};
+        const championMeta: Record<string, TftChampionEntry> = {};
+        const championSpellMeta: Record<string, TftChampionSpellMeta> = {};
+        const traitMeta: Record<string, TftTraitMeta> = {};
 
         for (const champion of championsJson) {
           const characterId = champion.character_record?.character_id;
           const displayName = champion.character_record?.display_name;
-          const icon = buildChampionIconUrl(characterId);
+          const squareIconPath = champion.character_record?.squareIconPath;
+          const icon = buildChampionIconUrl(squareIconPath, characterId);
 
-          if (!characterId || !icon) continue;
+          if (characterId && icon) {
+            addAlias(champions, characterId, icon);
+            addAlias(champions, champion.name, icon);
+            addAlias(champions, displayName, icon);
+          }
 
-          addAlias(champions, characterId, icon);
-          addAlias(champions, champion.name, icon);
-          addAlias(champions, displayName, icon);
+          if (characterId) {
+            addChampionMetaAlias(championMeta, characterId, champion);
+            addChampionMetaAlias(championMeta, champion.name, champion);
+            addChampionMetaAlias(championMeta, displayName, champion);
+
+            const spellMeta: TftChampionSpellMeta = {
+              championId: characterId,
+              abilityName: champion.ability?.name?.trim() || undefined,
+              abilityDescription: stripHtml(champion.ability?.desc),
+              abilityIcon: toCDragonAssetUrl(champion.ability?.iconPath),
+              mana: champion.ability?.mana ?? null,
+              maxMana: champion.ability?.maxMana ?? null,
+            };
+
+            addSpellMetaAlias(championSpellMeta, characterId, spellMeta);
+            addSpellMetaAlias(championSpellMeta, champion.name, spellMeta);
+            addSpellMetaAlias(championSpellMeta, displayName, spellMeta);
+          }
         }
 
         for (const item of itemsJson) {
-          const icon = buildItemIconUrl(item.squareIconPath);
-
+          const icon = toCDragonAssetUrl(item.squareIconPath) ?? "";
           if (!icon) continue;
 
           addAlias(items, item.nameId, icon);
@@ -174,14 +224,14 @@ export function useTftAssets() {
         }
 
         for (const trait of traitsJson) {
-          const icon = buildTraitIconUrl(trait.icon_path);
+          const icon = toCDragonAssetUrl(trait.icon_path) ?? "";
 
           if (icon) {
             addAlias(traits, trait.trait_id, icon);
             addAlias(traits, trait.display_name, icon);
           }
 
-          const metaValue = {
+          const metaValue: TftTraitMeta = {
             id: trait.trait_id ?? "",
             name: trait.display_name ?? trait.trait_id ?? "Unknown Trait",
             icon,
@@ -206,6 +256,8 @@ export function useTftAssets() {
             items,
             traits,
             traitMeta,
+            championMeta,
+            championSpellMeta,
             loading: false,
           });
         }
@@ -218,6 +270,8 @@ export function useTftAssets() {
             items: {},
             traits: {},
             traitMeta: {},
+            championMeta: {},
+            championSpellMeta: {},
             loading: false,
           });
         }

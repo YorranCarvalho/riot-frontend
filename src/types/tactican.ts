@@ -163,3 +163,52 @@ export interface TacticianProfileResponse {
   recentMatches: TacticianMatch[];
   performance: Record<TftQueueKey, TftPerformanceBucket>;
 }
+
+export interface TftChampionTraitRef {
+  name?: string;
+  id?: string;
+}
+
+export interface TftChampionAbilityVariables {
+  name?: string;
+  value?: number[];
+}
+
+export interface TftChampionAbility {
+  name?: string;
+  desc?: string;
+  iconPath?: string;
+  mana?: number | null;
+  maxMana?: number | null;
+  variables?: TftChampionAbilityVariables[];
+}
+
+export interface TftChampionCharacterRecord {
+  path?: string;
+  character_id?: string;
+  rarity?: number | null;
+  display_name?: string;
+  squareIconPath?: string;
+  traits?: TftChampionTraitRef[];
+}
+
+export interface TftChampionEntry {
+  name?: string;
+  cost?: number | null;
+  traits?: TftChampionTraitRef[];
+  ability?: TftChampionAbility;
+  character_record?: TftChampionCharacterRecord;
+}
+
+export interface NormalizedTftChampion {
+  id: string;
+  name: string;
+  icon: string;
+  cost: number;
+  traits: string[];
+  abilityName: string;
+  abilityDescription: string;
+  abilityIcon?: string;
+  manaStart: number;
+  manaMax: number;
+}

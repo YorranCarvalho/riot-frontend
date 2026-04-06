@@ -217,7 +217,6 @@ function resolveExpression(expr: string, constants: Map<string, number>): Resolv
   }
 
   try {
-    // eslint-disable-next-line no-new-func
     const result = Function(`return (${sanitized})`)();
     if (typeof result !== "number" || Number.isNaN(result)) {
       return { kind: "missing" };

@@ -9,7 +9,7 @@ const StrategistSidebar = ({ data }: Props) => {
   const iconId = data.profile?.profileIconId ?? 29;
 
   return (
-    <aside className="self-start sticky top-6 rounded-[28px] border border-white/10 bg-gradient-to-b from-[#0d162e] to-[#0a1124] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
+    <aside className="self-start rounded-[28px] border border-white/10 bg-gradient-to-b from-[#0d162e] to-[#0a1124] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
       <div className="flex flex-col items-center text-center">
         <div className="relative">
           <div className="absolute inset-0 rounded-3xl blur-md bg-cyan-400/20" />
